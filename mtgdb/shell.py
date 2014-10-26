@@ -1,4 +1,4 @@
-from models.Card import Card
+from api.models import Card, CardSet
 import requests
 from init import MTG_DB
 import os
