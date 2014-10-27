@@ -1,7 +1,6 @@
 from models.Card import Card
 import requests
 
-MTG_DB = 'http://api.mtgdb.info/cards/'
 
 def __init__():
     req = requests.get( 'http://api.mtgdb.info/cards/20')

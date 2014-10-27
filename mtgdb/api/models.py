@@ -14,8 +14,8 @@ class MtgDbObject(object):
         Expects a dictionary of a specific format. Do not attempt to pass an arbitrary dictionary,
         or other methods will not work as expected.
         """
-        for attribute in card_attr_dict:
-            setattr(self, attribute, attr_dict[attribute])
+        for attribute in attr_dict:
+            setattr(self, pylike_property_name(attribute), attr_dict[attribute])
 
 
 class Card(MtgDbObject):
@@ -31,7 +31,7 @@ class Card(MtgDbObject):
         Expects a dictionary of a specific format. Do not attempt to pass an arbitrary dictionary,
         or other methods will not work as expected.
         """
-        super.__init__(self, card_attr_dict)
+        super(Card, self).__init__(card_attr_dict)
 
     def get_image(self, hiRes=False):
         """
@@ -46,7 +46,7 @@ class Card(MtgDbObject):
         if( hiRes ):
             image_url = HI_RES_IMAGE_URL
 
-        return image_url + "{0}.jpeg".format(self.id)
+        return "{0}{1}.jpeg".format(image_url, self.id)
 
     def get_legality(self, format=None):
         """
@@ -65,6 +65,14 @@ class Card(MtgDbObject):
                 return legality_format_dict['legality']
         return u'Legal'  # assume unspecified is legal
 
+    def is_legal(self, format):
+        """
+        A convenience method for determining if a card is legal in a certain format. Any legality
+        other than fully Legal (ie Restricted, Banned) will evaluate to False
+        :returns: Whether the card is fully legal in a given format
+        """
+        return get_legality(format) == 'Legal'
+
 
 class CardSet(MtgDbObject):
     """
@@ -76,4 +84,15 @@ class CardSet(MtgDbObject):
         Expects a dictionary of a specific format. Do not attempt to pass an arbitrary dictionary,
         or other methods will not work as expected.
         """
-        super.__init__(self, card_set_attr_dict)
+        super(CardSet, self).__init__(card_set_attr_dict)
+
+def pylike_property_name(s):
+    """
+    """
+    new_name = ''
+    for char in s:
+        if(char.upper() == char):  # character is uppercase
+            new_name += '_{0}'.format(char.lower())
+        else:
+            new_name += char
+    return new_name

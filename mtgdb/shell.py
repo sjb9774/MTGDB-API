@@ -1,10 +1,13 @@
+import os
+import sys
+os.environ['PYTHONINSPECT'] = 'True'
+sys.dont_write_bytecode = True
+
+from api import config, dbaccess, models
+from api.config import MTG_DB_URL, CARDS_PATH, SETS_PATH
 from api.models import Card, CardSet
 import requests
-from init import MTG_DB
-import os
 import readline
-
-os.environ['PYTHONINSPECT'] = 'True'
 
 def getCard(id):
     requested_card = requests.get(MTG_DB+str(id))
