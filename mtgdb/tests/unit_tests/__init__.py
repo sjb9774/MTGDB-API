@@ -1,5 +1,4 @@
 import sys
 import os
-import json
 
-sys.path.append('/Users/stephenbiston/python/mtgdb/')
+sys.path.append(os.path.abspath(os.path.join(__file__, os.pardir, os.pardir, os.pardir)))
