@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import json
-from api import models
 from api.models import Card
 
 import unittest

@@ -64,6 +64,21 @@ def get_random_card(set=None):
         else:
             return Card(r.json())
 
+def get_card_set(set_id, create_cards=False):
+    """
+    """
+    req_url = '{0}/{1}/{2}'.format(MTG_DB_URL, SETS_PATH, set_id)
+    card_set = CardSet(_process_simple_request(req_url))
+
+    if create_cards:
+        req_url += '/{0}'.format(CARDS_PATH)
+        card_set_json = _process_simple_request(req_url)
+
+        for card_json in card_set_json:
+            card_set.cards.append(Card(card_json))
+
+    return card_set
+
 def clean_card_name(s):
     """
     Removes characters from a card name that can't be used in a request to
@@ -72,4 +87,13 @@ def clean_card_name(s):
     :param s: The string to be cleaned.
     :returns: A safe string that can be used in a request.
     """
-    return s.replace(':', '')
+    return s.replace(':', '').replace('/', '')
+
+def _process_simple_request(req_url, error_msg=None):
+    """
+    """
+    r = requests.get(req_url)
+    if(r.status_code != 200):
+        raise Exception(error_msg)
+    else:
+        return r.json()

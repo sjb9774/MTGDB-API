@@ -17,7 +17,7 @@ class MtgDbObject(object):
         or other methods will not work as expected.
         """
         for attribute in attr_dict:
-            setattr(self, pylike_property_name(attribute), attr_dict[attribute])
+            setattr(self, _pylike_property_name(attribute), attr_dict[attribute])
 
 
 class Card(MtgDbObject):
@@ -77,7 +77,9 @@ class Card(MtgDbObject):
 
 class CardSet(MtgDbObject):
     """
-    Represents a set of Card objects
+    Represents a card set from Magic: The Gathering. If the card objects have been built
+    they will be contained in card_set.cards, otherwise the ids of the cards in the set
+    are found in card_set.card_ids
     """
 
     def __init__(self, card_set_attr_dict):
@@ -86,9 +88,10 @@ class CardSet(MtgDbObject):
         or other methods will not work as expected.
         """
         super(CardSet, self).__init__(card_set_attr_dict)
+        self.cards = []
 
 
-def pylike_property_name(s):
+def _pylike_property_name(s):
     """
     This function is used to translate a camel-case property name to an all lowercase
     python-style name separated by underscores instead.

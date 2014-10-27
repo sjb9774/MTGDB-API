@@ -1,12 +1,11 @@
 """
-These are technically integration tests, they are included with the unit tests right now
-for quick development purposes
+Integration tests
 """
 
 from api import dbaccess
 import unittest
 
-class TestDbAccessMethods(unittest.TestCase):
+class TestDbCardMethods(unittest.TestCase):
     """
     """
 
@@ -27,3 +26,23 @@ class TestDbAccessMethods(unittest.TestCase):
         c = dbaccess.get_card(id=self.card_id)
         self.assertEquals(c.name, self.card_name)
         self.assertEquals(c.card_set_id, self.card_set_id)
+
+class TestDbCardSetMethods(unittest.TestCase):
+    """
+    """
+
+    def setUp(self):
+        pass
+
+    def test_get_card_set_no_build(self):
+        cs = dbaccess.get_card_set('GTC', False)
+        self.assertEquals(cs.name, 'Gatecrash')
+
+    def test_get_card_set_with_build(self):
+        cs = dbaccess.get_card_set('GTC', True)
+        correct_set = True
+        for card in cs.cards:
+            if(card.card_set_id != 'GTC'):
+                correct_set = False
+                break
+        self.assertTrue(correct_set)
