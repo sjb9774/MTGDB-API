@@ -19,18 +19,25 @@ class MtgDbObject(object):
         for attribute in attr_dict:
             setattr(self, _pylike_property_name(attribute), attr_dict[attribute])
 
+        self.json_data = attr_dict
+
 
 class Card(MtgDbObject):
     """
     Represents a single Magic: The Gathering card
     """
 
-    def __init__(self, card_attr_dict):
+    def __init__(self, card_attr_dict=None, id=None, name=None):
         """
         Expects a dictionary of a specific format. Do not attempt to pass an arbitrary dictionary,
         or other methods will not work as expected.
         """
-        super(Card, self).__init__(card_attr_dict)
+        if id:
+            self.id = id
+        elif name:
+            self.name = name
+        else:
+            super(Card, self).__init__(card_attr_dict)
 
     def get_image(self, hiRes=False):
         """
