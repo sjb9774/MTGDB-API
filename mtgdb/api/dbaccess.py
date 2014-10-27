@@ -7,7 +7,7 @@ from models import Card, CardSet
 from config import MTG_DB_URL, CARDS_PATH, SETS_PATH, RANDOM_CARD_PATH
 import requests
 
-def get_card(name=None, id=None):
+def get_card(id=None, name=None):
     """
     Retrieves a card from the database using a name or card id. If both name
     and id are provided, only the id will be used. If neither id nor name are
@@ -17,7 +17,7 @@ def get_card(name=None, id=None):
     :param id: Optional. Specifies the id of the card to retrieve.
     :returns: A Card object.
     """
-    card_url = "{0}{1}{2}"
+    card_url = "{0}/{1}/{2}"
     if id:
         r = requests.get(card_url.format(MTG_DB_URL,
                                          CARDS_PATH,
@@ -45,9 +45,10 @@ def get_random_card(set=None):
     :returns: A Card object.
     """
     if(set):
-        req_url = '{0}{1}{2}{3}'.format(MTG_DB_URL,
+        req_url = '{0}/{1}/{2}/{3}/{4}'.format(MTG_DB_URL,
                                         SETS_PATH,
                                         set,
+                                        CARDS_PATH,
                                         RANDOM_CARD_PATH)
         r = requests.get(req_url)
         if(r.status_code != 200):
@@ -56,7 +57,7 @@ def get_random_card(set=None):
         else:
             return Card(r.json())
     else:
-        req_url = '{0}{1}'.format(MTG_DB_URL, RANDOM_CARD_PATH)
+        req_url = '{0}/{1}/{2}'.format(MTG_DB_URL, CARDS_PATH, RANDOM_CARD_PATH)
         r = requests.get(req_url)
         if(r.status_code != 200):
             raise Exception('There was a problem finding a random card.')

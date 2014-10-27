@@ -4,6 +4,8 @@ intended to be used internally and its methods should not be called and objects 
 outside of the API.
 """
 
+from config import REG_IMAGE_URL, HI_RES_IMAGE_URL
+
 class MtgDbObject(object):
     """
     Base object for the models in the API.
@@ -23,9 +25,6 @@ class Card(MtgDbObject):
     Represents a single Magic: The Gathering card
     """
 
-    REG_IMAGE_URL = 'http://api.mtgdb.info/content/card_images/'
-    HI_RES_IMAGE_URL = 'http://api.mtgdb.info/content/hi_res_card_images/'
-
     def __init__(self, card_attr_dict):
         """
         Expects a dictionary of a specific format. Do not attempt to pass an arbitrary dictionary,
@@ -42,11 +41,13 @@ class Card(MtgDbObject):
         """
 
         image_url = REG_IMAGE_URL
+        ext = 'jpeg'
 
         if( hiRes ):
             image_url = HI_RES_IMAGE_URL
+            ext = 'jpg'
 
-        return "{0}{1}.jpeg".format(image_url, self.id)
+        return "{0}/{1}.{2}".format(image_url, self.id, ext)
 
     def get_legality(self, format=None):
         """
@@ -71,7 +72,7 @@ class Card(MtgDbObject):
         other than fully Legal (ie Restricted, Banned) will evaluate to False
         :returns: Whether the card is fully legal in a given format
         """
-        return get_legality(format) == 'Legal'
+        return self.get_legality(format) == 'Legal'
 
 
 class CardSet(MtgDbObject):
@@ -86,12 +87,19 @@ class CardSet(MtgDbObject):
         """
         super(CardSet, self).__init__(card_set_attr_dict)
 
+
 def pylike_property_name(s):
     """
+    This function is used to translate a camel-case property name to an all lowercase
+    python-style name separated by underscores instead.
+
+    :param s: A camelCase string
+    :returns: A lowercase underscore separated string
+              (ie exampleAttrName -> example_attr_name)
     """
     new_name = ''
     for char in s:
-        if(char.upper() == char):  # character is uppercase
+        if not char.isdigit() and char.upper() == char:  # character is uppercase
             new_name += '_{0}'.format(char.lower())
         else:
             new_name += char
