@@ -97,6 +97,11 @@ class CardSet(MtgDbObject):
         super(CardSet, self).__init__(card_set_attr_dict)
         self.cards = []
 
+    def __iter__(self):
+        return iter(self.cards)
+
+    def __len__(self):
+        return len(self.card_ids)
 
 def _pylike_property_name(s):
     """
