@@ -4,7 +4,7 @@ This module introduces methods for dealing with complex searches of the database
 
 import dbaccess
 import requests
-from api.models import Card
+from api.models import Card, CardList
 from config import MTG_DB_URL, SIMPLE_SEARCH_PATH
 from mtgconsts import FIELDS
 
@@ -33,6 +33,7 @@ class Search():
 
     def __init__(self):
         """
+        Creates a new Search object.
         """
         self.query_dict = {}
         self.count = False
@@ -61,6 +62,11 @@ class Search():
 
     def process(self):
         """
+        Analyzes all parameters and criteria defined for the search and readies the
+        query for searching against the database. Use this method to "apply" any changes
+        to the a Search object before calling search().
+
+        :returns: A reference to the Search object.
         """
         q = "?q="
         lst = []
@@ -75,16 +81,21 @@ class Search():
             q +="&count=True"
         self.query = q
 
+        return self
+
 
     def search(self):
         """
+        Submits the query to the database and returns the results of the search.
+
+        :returns: A CardList containing the results of the search.
         """
         url = "{0}/{1}/{2}".format(MTG_DB_URL, SIMPLE_SEARCH_PATH, self.query)
         results = dbaccess._process_simple_request(url)
         cards = []
         for card_data in results:
             cards.append(Card(card_data))
-        return cards
+        return CardList(cards)
 
 
     def __str__(self):

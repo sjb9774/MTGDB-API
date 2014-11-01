@@ -5,6 +5,7 @@ outside of the API.
 """
 
 from config import REG_IMAGE_URL, HI_RES_IMAGE_URL
+from util import _pythonic_property_name
 
 class MtgDbObject(object):
     """
@@ -17,7 +18,7 @@ class MtgDbObject(object):
         or other methods will not work as expected.
         """
         for attribute in attr_dict:
-            setattr(self, _pylike_property_name(attribute), attr_dict[attribute])
+            setattr(self, _pythonic_property_name(attribute), attr_dict[attribute])
 
         self.json_data = attr_dict
 
@@ -81,6 +82,9 @@ class Card(MtgDbObject):
         """
         return self.get_legality(format) == 'Legal'
 
+    def __str__(self):
+        return self.name
+
 
 class CardSet(MtgDbObject):
     """
@@ -103,19 +107,64 @@ class CardSet(MtgDbObject):
     def __len__(self):
         return len(self.card_ids)
 
-def _pylike_property_name(s):
+class CardList():
     """
-    This function is used to translate a camel-case property name to an all lowercase
-    python-style name separated by underscores instead.
+    Represents an arbitrary list of Magic: The Gathering cards and provides a number
+    of convenience functions for dealing with them.
+    """
 
-    :param s: A camelCase string
-    :returns: A lowercase underscore separated string
-              (ie exampleAttrName -> example_attr_name)
-    """
-    new_name = ''
-    for char in s:
-        if not char.isdigit() and char.upper() == char:  # character is uppercase
-            new_name += '_{0}'.format(char.lower())
+    def __init__(self, cards):
+        """
+        Expects a list containing only lists and Card objects. Any nested lists will be
+        recursively traversed so the CardList will hold all cards.
+
+        :param cards: A list of Card objects.
+        """
+        self.cards = []
+        self.append(cards)
+
+    def append(self, cards):
+        """
+        Recursively appends a list of Card objects to the CardList.
+
+        :param cards: A list of Card objects.
+        """
+        if( type(cards) == list ):
+            for card in cards:
+                self.append(card)
         else:
-            new_name += char
-    return new_name
+            self.cards.append(cards)
+
+    def remove_reprints(self):
+        """
+        Removes all versions of each card except one from the CardList. There is no
+        guarantee which version will be kept.
+        """
+        new_cards = []
+        added = {}
+
+        for card in self.cards:
+            if card.name in added:
+                continue
+            else:
+                new_cards.append(card)
+                added[card.name] = len(new_cards) - 1
+
+        self.cards = new_cards
+
+    def __getitem__(self, i):
+        c = None
+        for card in self.cards:
+            if card.name == i:
+                if c:
+                    c.append(card)
+                else:
+                    c = [card]
+        return c
+
+
+    def __iter__(self):
+        return iter(self.cards)
+
+    def __len__(self):
+        return len(self.cards)

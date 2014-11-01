@@ -6,6 +6,7 @@ all calls to find a card or set of cards should go through this module.
 from models import Card, CardSet
 from config import MTG_DB_URL, CARDS_PATH, SETS_PATH, RANDOM_CARD_PATH, \
                    SIMPLE_SEARCH_PATH
+from util import _process_simple_request
 import requests
 
 def get_card(id=None, name=None, fields=None):
@@ -176,12 +177,3 @@ def get_card_list(card_list):
         cards.append(Card(card_data))
 
     return cards
-
-def _process_simple_request(req_url, error_msg=None, payload=None):
-    """
-    """
-    r = requests.get(req_url, params=payload)
-    if(r.status_code != 200):
-        raise Exception(error_msg)
-    else:
-        return r.json()
