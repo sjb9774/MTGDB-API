@@ -4,7 +4,7 @@ def _process_simple_request(req_url, error_msg=None, payload=None):
     """
     """
     r = requests.get(req_url, params=payload)
-    if(r.status_code != 200):
+    if(r.status_code != 200 or is_empty(r.json())):
         raise Exception(error_msg)
     else:
         return r.json()
