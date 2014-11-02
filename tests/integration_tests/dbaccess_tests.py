@@ -10,7 +10,7 @@ class TestDbCardMethods(unittest.TestCase):
     """
 
     def setUp(self):
-        # test specific card properties
+        # for specific card properties tests
         self.card_id = 50
         self.card_name = 'Black Knight'
         self.card_set_id = 'LEA'
@@ -19,6 +19,24 @@ class TestDbCardMethods(unittest.TestCase):
 
     def test_random_card_no_set(self):
         c = dbaccess.get_random_card()
+
+    def test_nonexistent_card_by_id(self):
+        try:
+            dbaccess.get_card(id=99999999)
+        except Exception:
+            self.assertTrue(True)
+            return
+
+        self.assertTrue(False)  # fail otherwise
+
+    def test_nonexistent_card_by_name(self):
+        try:
+            dbaccess.get_card(name="Clurpfing Shapter")
+        except Exception:
+            self.assertTrue(True)
+            return
+
+        self.assertTrue(False)  # fail otherwise
 
     def test_random_card_with_set(self):
         c = dbaccess.get_random_card('THS')
