@@ -25,6 +25,9 @@ s.process()
 
 # search() returns special CardList item that behaves mostly like a list
 resulting_card_list = s.search()
+
+for card in resulting_card_list:
+  print card
   
 ##########
 # Output #
