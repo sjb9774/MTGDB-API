@@ -48,17 +48,17 @@ for card in resulting_card_list:
 # Output #
 ##########
 
-Theros
-3 / 3
-Bestow {5}{Green}(If you cast this card for its bestow cost, it's an Aura spell with enchant creature. It becomes a creature again if it's not attached to a creature.)
-Trample
-Enchanted creature gets +3/+3 and has trample.
-------------
-Theros
-2 / 2
-Bestow {3}{Green}(If you cast this card for its bestow cost, it's an Aura spell with enchant creature. It becomes a creature again if it's not attached to a creature.)
-Reach
-Enchanted creature gets +2/+2 and has reach.
-------------
+# Theros
+# 3 / 3
+# Bestow {5}{Green}(If you cast this card for its bestow cost, it's an Aura spell with enchant creature. It becomes a creature again if it's not attached to a creature.)
+# Trample
+# Enchanted creature gets +3/+3 and has trample.
+# ------------
+# Theros
+# 2 / 2
+# Bestow {3}{Green}(If you cast this card for its bestow cost, it's an Aura spell with enchant creature. It becomes # a creature again if it's not attached to a creature.)
+# Reach
+# Enchanted creature gets +2/+2 and has reach.
+# ------------
 
 ```
