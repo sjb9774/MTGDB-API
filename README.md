@@ -6,7 +6,7 @@ A python API for using the MtgDb.info database
 
 The only requirement for this project is the requests module, `pip install requests` allows for easy installation. Click [here](http://docs.python-requests.org/en/latest/) for more information on requests.
 
-With the requirements in place you can clone the repo and get started! mtgdb.api.dbaccess will be used for most of your basic needs and mtgdb.api.complexsearch should take care of the rest. Use shell.py for playing around and testing some of the functions.
+With the requirements in place you can clone the repo and get started! `mtgdb.api.dbaccess` will be used for most of your basic needs and `mtgdb.api.complexsearch` should take care of the rest. Use `shell.py` for playing around and testing some of the functions.
 
 ## Short Example
 
