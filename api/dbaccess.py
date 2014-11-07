@@ -157,6 +157,8 @@ def populate_fields_from_db(card):
     else:
         raise Exception('No identifying attributes in Card object')
 
+    card._toss_bad_attributes()
+
 def build_cards_in_card_set(card_set):
     """
     """

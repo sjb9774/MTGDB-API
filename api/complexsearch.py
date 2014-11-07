@@ -53,7 +53,8 @@ class Search():
         def fn(**kwargs):
             for key, value in kwargs.items():
                 if key in kw_map:
-                    self.query_dict[field][key].append(value)
+                    if value not in self.query_dict[field][key]:
+                        self.query_dict[field][key].append(value)
                 else:
                     raise Exception("{0} is not a valid keyword.".format(key))
             return self

@@ -39,6 +39,15 @@ class Card(MtgDbObject):
             self.name = name
         else:
             super(Card, self).__init__(card_attr_dict)
+            self._toss_bad_attributes()
+
+
+    def _toss_bad_attributes(self):
+        if not "creature" in self.type.lower():
+            del self.power
+            del self.toughness
+            self.json_data.pop('power', 0)
+            self.json_data.pop('toughness', 0)
 
     def get_image(self, hiRes=False):
         """
@@ -84,6 +93,20 @@ class Card(MtgDbObject):
 
     def __str__(self):
         return self.name
+
+    def __repr__(self):
+        showable_items = [ "name", "manacost", "setId", "type", "description", "power", "toughness" ]
+        showable_items_in_card = []
+
+        for item in showable_items:
+            if( item in self.json_data ):
+                showable_items_in_card.append(item)
+
+        s = ""
+        for item in showable_items_in_card:
+            s += item + ":\t" + str(getattr(self, item)) + "\n"
+
+        return s
 
 
 class CardSet(MtgDbObject):
@@ -153,6 +176,9 @@ class CardList():
         self.cards = new_cards
 
     def __getitem__(self, i):
+        if type(i) == int:
+            return self.cards[i]
+
         c = None
         for card in self.cards:
             if card.name == i:
@@ -160,6 +186,9 @@ class CardList():
                     c.append(card)
                 else:
                     c = [card]
+        if(len(c) == 1):
+            return c[0]
+
         return c
 
 
@@ -168,3 +197,10 @@ class CardList():
 
     def __len__(self):
         return len(self.cards)
+
+    def __str__(self):
+        s = ""
+        for x in range(len(self) - 1):
+            s += str(self[x]) + "\n"
+        s += str(self[-1])
+        return s
