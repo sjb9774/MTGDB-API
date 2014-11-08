@@ -95,7 +95,7 @@ class Card(MtgDbObject):
         return self.name
 
     def __repr__(self):
-        showable_items = [ "name", "manacost", "setId", "type", "description", "power", "toughness" ]
+        showable_items = [ "name", "mana_cost", "setId", "type", "description", "power", "toughness" ]
         showable_items_in_card = []
 
         for item in showable_items:
