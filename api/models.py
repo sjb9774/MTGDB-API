@@ -44,8 +44,10 @@ class Card(MtgDbObject):
 
     def _toss_bad_attributes(self):
         if not "creature" in self.type.lower():
-            del self.power
-            del self.toughness
+            if hasattr(self, 'power'):
+                del self.power
+            if hasattr(self, 'toughness'):
+                del self.toughness
             self.json_data.pop('power', 0)
             self.json_data.pop('toughness', 0)
 
@@ -95,11 +97,11 @@ class Card(MtgDbObject):
         return self.name
 
     def __repr__(self):
-        showable_items = [ "name", "mana_cost", "setId", "type", "description", "power", "toughness" ]
+        showable_items = [ "name", "mana_cost", "card_set_id", "type", "description", "power", "toughness" ]
         showable_items_in_card = []
 
         for item in showable_items:
-            if( item in self.json_data ):
+            if hasattr(self, item):
                 showable_items_in_card.append(item)
 
         s = ""
@@ -158,7 +160,7 @@ class CardList():
         else:
             self.cards.append(cards)
 
-    def remove_reprints(self):
+    def remove_reprints(self, keep_sets=None):
         """
         Removes all versions of each card except one from the CardList. There is no
         guarantee which version will be kept.
@@ -166,14 +168,35 @@ class CardList():
         new_cards = []
         added = {}
 
-        for card in self.cards:
-            if card.name in added:
-                continue
-            else:
-                new_cards.append(card)
-                added[card.name] = len(new_cards) - 1
+        if keep_sets:
+            for card in self.cards:
+                cards_of_this_name = self[card.name]
+
+                cards_from_keep_sets = filter( lambda c: c.card_set_id in keep_sets,
+                                               cards_of_this_name )
+
+                if len(cards_from_keep_sets) == 0:
+                    new_cards.append(cards_of_this_name[0])
+                else:
+                    for card in cards_from_keep_sets:
+                        new_cards.append(card)
+
+        else:
+            for card in self.cards:
+                if card.name in added:
+                    continue
+                else:
+                    new_cards.append(card)
+                    added[card.name] = len(new_cards) - 1
 
         self.cards = new_cards
+
+    def copy(self):
+        copy_cards = []
+        for card in self.cards:
+            copy_cards.append(Card(card.json_data))
+
+        return CardList(copy_cards)
 
     def __getitem__(self, i):
         if type(i) == int:
@@ -186,11 +209,10 @@ class CardList():
                     c.append(card)
                 else:
                     c = [card]
-        if(len(c) == 1):
+        if c and len(c) == 1:
             return c[0]
 
         return c
-
 
     def __iter__(self):
         return iter(self.cards)
