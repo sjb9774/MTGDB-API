@@ -21,7 +21,7 @@ class TestCardList(unittest.TestCase):
 
     def test_access_by_string_index_with_one_result(self):
         c = self.cardlist["Cloud Pirates"]
-        self.assertEquals(type(c), Card)
+        self.assertEquals(type(c[0]), Card)
 
     def test_access_by_string_index_with_multiple_results(self):
         c = self.cardlist["Cloud of Faeries"]
@@ -37,3 +37,37 @@ class TestCardList(unittest.TestCase):
         copy_list = self.cardlist.copy()
         copy_list.cards = copy_list.cards[0:-1]
         self.assertEquals( len(copy_list.cards), len(self.cardlist.cards) -1 )
+
+        copy_list.cards[0].name = "CHANGED_NAME"
+        self.assertFalse( copy_list.cards[0].name == self.cardlist.cards[0].name )
+
+    def test_remove_reprints_without_keep_sets(self):
+        '''DEPENDS ON COPY FUNCTION, IF test_copy_card_list FAILS WITH THIS, FIX COPY FIRST'''
+
+        l = {}
+        for card in self.cardlist:
+            if card.name in l:
+                l[card.name] += 1
+            else:
+                l[card.name] = 1
+
+        number_of_reprints = 0
+        for key in l:
+            number_of_reprints += (l[key] - 1)
+
+        cl = self.cardlist.copy()
+        cl.remove_reprints()
+
+        self.assertEquals(len(cl.cards), len(self.cardlist.cards) - number_of_reprints)
+
+    def test_remove_reprints_with_keep_sets(self):
+        keep_sets = ['VIS']
+
+        copy_list = self.cardlist.copy()
+        copy_list.remove_reprints(prefer_sets=keep_sets)
+
+        # there are 11 unique cards in the list
+        self.assertEquals( len(copy_list.cards), 11 )
+
+        self.assertEquals( len(copy_list["Cloud Elemental"]), 1 )
+        self.assertEquals( copy_list["Cloud Elemental"][0].card_set_id, "VIS")

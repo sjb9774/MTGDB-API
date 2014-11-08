@@ -160,28 +160,38 @@ class CardList():
         else:
             self.cards.append(cards)
 
-    def remove_reprints(self, keep_sets=None):
+    def remove_reprints(self, prefer_sets=None):
         """
         Removes all versions of each card except one from the CardList. There is no
         guarantee which version will be kept.
         """
         new_cards = []
-        added = {}
 
-        if keep_sets:
+        if prefer_sets:
+            added = []
             for card in self.cards:
+                # reprints all have the same name, self[card.name] returns all cards by
+                # that name so we only check one of any given name
+                if card.name in added:
+                    continue
+                else:
+                    added.append(card.name)
+
                 cards_of_this_name = self[card.name]
 
-                cards_from_keep_sets = filter( lambda c: c.card_set_id in keep_sets,
-                                               cards_of_this_name )
+                cards_from_prefer_sets = []
+                for c in cards_of_this_name:
+                    if c.card_set_id in prefer_sets:
+                        cards_from_prefer_sets.append(c)
 
-                if len(cards_from_keep_sets) == 0:
+                if len(cards_from_prefer_sets) == 0:
                     new_cards.append(cards_of_this_name[0])
                 else:
-                    for card in cards_from_keep_sets:
+                    for card in cards_from_prefer_sets:
                         new_cards.append(card)
 
         else:
+            added = {}
             for card in self.cards:
                 if card.name in added:
                     continue
@@ -209,9 +219,6 @@ class CardList():
                     c.append(card)
                 else:
                     c = [card]
-        if c and len(c) == 1:
-            return c[0]
-
         return c
 
     def __iter__(self):
